@@ -1,4 +1,4 @@
-🎓 Event Management System (EMS)
+**🎓 Event Management System (EMS)**
 
 A smart digital platform for managing university events and venue bookings efficiently. The system allows students to submit event proposals and coordinators to review and approve them digitally, reducing manual paperwork and approval delays.
 
