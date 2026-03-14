@@ -41,7 +41,7 @@ public class EventService {
         if (start.isAfter(end) || start.isEqual(end)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start time must be before end time");
         }
-        if (start.isBefore(OffsetDateTime.now())) {
+        if (start.isBefore(OffsetDateTime.now().minusDays(1))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Event cannot be scheduled in the past");
         }
 

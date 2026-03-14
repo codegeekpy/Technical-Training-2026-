@@ -10,7 +10,8 @@ import java.util.List;
 public class VenueAvailabilityResponse {
     private Long venue_id;
     private String venue_name;
-    private boolean is_available;
+    @com.fasterxml.jackson.annotation.JsonProperty("is_available")
+    private boolean isAvailable;
     private List<ConflictingEvent> conflicting_events;
 
     @Data

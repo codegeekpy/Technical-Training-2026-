@@ -74,7 +74,7 @@ public class VenueController {
         return VenueAvailabilityResponse.builder()
                 .venue_id(venueId)
                 .venue_name(venue.getName())
-                .is_available(conflictingEvents.isEmpty())
+                .isAvailable(conflictingEvents.isEmpty())
                 .conflicting_events(conflictingEvents)
                 .build();
     }
