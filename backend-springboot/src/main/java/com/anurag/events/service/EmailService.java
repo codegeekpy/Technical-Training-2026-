@@ -1,6 +1,5 @@
 package com.anurag.events.service;
 
-import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,11 +32,11 @@ public class EmailService {
             helper.setFrom(fromName + " <" + fromEmail + ">");
             helper.setTo(toEmail);
             helper.setSubject(subject);
-            helper.setText(htmlBody, true); // true sets it to HTML
+            helper.setText(htmlBody, true);
 
             emailSender.send(message);
             log.info("[EMAIL SENT] To: {} | Subject: {}", toEmail, subject);
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             log.error("[EMAIL FAILED] To: {} | Error: {}", toEmail, e.getMessage());
         }
     }

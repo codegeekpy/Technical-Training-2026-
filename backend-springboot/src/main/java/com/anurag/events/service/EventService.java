@@ -35,15 +35,18 @@ public class EventService {
 
     @Transactional
     public EventProposalResponse proposeEvent(EventProposalRequest request, Long userId) {
-        if (request.getStart_datetime().isAfter(request.getEnd_datetime()) || request.getStart_datetime().isEqual(request.getEnd_datetime())) {
+        OffsetDateTime start = request.getStart_datetime().atOffset(OffsetDateTime.now().getOffset());
+        OffsetDateTime end = request.getEnd_datetime().atOffset(OffsetDateTime.now().getOffset());
+
+        if (start.isAfter(end) || start.isEqual(end)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start time must be before end time");
         }
-        if (request.getStart_datetime().isBefore(OffsetDateTime.now())) {
+        if (start.isBefore(OffsetDateTime.now())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Event cannot be scheduled in the past");
         }
 
-        boolean hasConflicts = bookingService.checkVenueAvailability(request.getVenue_id(), request.getStart_datetime(), request.getEnd_datetime(), null);
-        if (!hasConflicts) { // method returns true if available, false if conflicts match FastAPI inverted logic
+        boolean isAvailable = bookingService.checkVenueAvailability(request.getVenue_id(), start, end, null);
+        if (!isAvailable) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Venue is already booked for the selected time slot. Please choose a different time or venue.");
         }
 
@@ -58,13 +61,13 @@ public class EventService {
                 .venue(venue)
                 .facultyIncharge(request.getFaculty_incharge())
                 .expectedParticipants(request.getExpected_participants())
-                .startDatetime(request.getStart_datetime())
-                .endDatetime(request.getEnd_datetime())
+                .startDatetime(start)
+                .endDatetime(end)
                 .eventType(request.getEvent_type())
                 .status(EventProposal.ProposalStatus.pending)
                 .build();
 
-        eventRepository.save(proposal);
+        proposal = eventRepository.save(proposal);
 
         notificationService.createNotification(organizer.getId(), "Your event proposal '" + proposal.getTitle() + "' has been submitted and is pending coordinator review.", NotificationType.proposal_submitted, proposal);
 
@@ -75,7 +78,7 @@ public class EventService {
             emailService.sendCoordinatorReviewRequest(c.getEmail(), c.getFullName(), proposal.getTitle(), organizer.getFullName(), proposal.getId());
         }
 
-        return mapToResponse(eventRepository.findById(proposal.getId()).get());
+        return mapToResponse(proposal);
     }
 
     public List<EventProposalResponse> getMyProposals(Long userId) {

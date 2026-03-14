@@ -43,18 +43,21 @@ public class VenueController {
     @GetMapping("/{venueId}/availability")
     public VenueAvailabilityResponse checkAvailability(
             @PathVariable Long venueId,
-            @RequestParam OffsetDateTime start_datetime,
-            @RequestParam OffsetDateTime end_datetime,
+            @RequestParam @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime start_datetime,
+            @RequestParam @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime end_datetime,
             @RequestParam(required = false) Long exclude_proposal_id) {
+
+        java.time.OffsetDateTime start = start_datetime.atOffset(java.time.OffsetDateTime.now().getOffset());
+        java.time.OffsetDateTime end = end_datetime.atOffset(java.time.OffsetDateTime.now().getOffset());
 
         Venue venue = venueRepository.findById(venueId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Venue not found"));
 
-        if (start_datetime.isAfter(end_datetime) || start_datetime.isEqual(end_datetime)) {
+        if (start.isAfter(end) || start.isEqual(end)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "start_datetime must be before end_datetime");
         }
 
-        List<Booking> conflicts = bookingService.getConflicts(venueId, start_datetime, end_datetime, exclude_proposal_id);
+        List<Booking> conflicts = bookingService.getConflicts(venueId, start, end, exclude_proposal_id);
         List<VenueAvailabilityResponse.ConflictingEvent> conflictingEvents = new ArrayList<>();
 
         for (Booking b : conflicts) {
