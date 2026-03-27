@@ -40,7 +40,7 @@ export default function Login() {
       <div className="auth-card">
         <div className="auth-header">
           <span className="auth-logo">🎓</span>
-          <h1>Anurag University</h1>
+          <h1>University Event Management System</h1>
           <p>✨ Event Management Portal</p>
         </div>
         <form onSubmit={handleSubmit} className="auth-form">

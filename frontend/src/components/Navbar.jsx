@@ -56,7 +56,7 @@ export default function Navbar() {
       <div className="navbar-brand">
         <Link to="/dashboard">
           <span className="brand-icon">🎓</span>
-          <span className="brand-text">Anurag University</span>
+          <span className="brand-text">University Event Management System</span>
           <span className="brand-sub">Events Portal</span>
         </Link>
       </div>

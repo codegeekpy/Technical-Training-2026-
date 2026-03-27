@@ -42,7 +42,7 @@ export default function Register() {
         <div className="auth-header">
           <div className="auth-logo">🎓</div>
           <h1>Create Account</h1>
-          <p>Anurag University Event Portal</p>
+          <p>University Event Management System</p>
         </div>
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
