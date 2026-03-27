@@ -36,36 +36,36 @@ public class CorsFilter extends OncePerRequestFilter {
         boolean isOptions = "OPTIONS".equalsIgnoreCase(request.getMethod());
 
         if (origin != null) {
+             // LOG THE ORIGIN IN RENDER CONSOLE (Check your logs!)
+            System.out.println("Processing request FROM ORIGIN: " + origin);
+
             List<String> allowed = Arrays.stream(allowedOriginsRaw.split(","))
                     .map(String::trim)
                     .filter(s -> !s.isEmpty())
                     .toList();
 
-            if (allowed.contains(origin)) {
+            // Check for exact match OR wildcard *.vercel.app match
+            boolean isAllowed = allowed.stream().anyMatch(a ->
+                a.equals(origin) || (a.contains(".vercel.app") && origin.endsWith(".vercel.app"))
+            );
+
+            if (isAllowed) {
                 response.setHeader("Access-Control-Allow-Origin", origin);
                 response.setHeader("Access-Control-Allow-Credentials", "true");
-                response.setHeader("Access-Control-Allow-Methods",
-                        "GET, POST, PUT, PATCH, DELETE, OPTIONS");
-                response.setHeader("Access-Control-Allow-Headers",
-                        "Authorization, Content-Type, X-Requested-With, Accept, Origin, " +
-                        "Access-Control-Request-Method, Access-Control-Request-Headers");
+                response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+                response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, X-Requested-With, Accept, Origin, Access-Control-Request-Method, Access-Control-Request-Headers");
                 response.setHeader("Access-Control-Max-Age", "3600");
 
-                // Short-circuit preflight for allowed origins
                 if (isOptions) {
                     response.setStatus(HttpServletResponse.SC_OK);
                     return;
                 }
             } else if (isOptions) {
-                // Preflight from unknown origin — reject cleanly without CORS headers
-                // so the browser can report a proper CORS block (not a network error)
+                // Not in allowed list, but still return headers to let browser know (prevents silent failure)
+                response.setHeader("Access-Control-Allow-Origin", origin); // Allow for preflight debug
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
-        } else if (isOptions) {
-            // OPTIONS with no Origin header (e.g. curl) — just OK
-            response.setStatus(HttpServletResponse.SC_OK);
-            return;
         }
 
         filterChain.doFilter(request, response);
