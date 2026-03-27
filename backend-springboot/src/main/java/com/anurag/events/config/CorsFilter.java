@@ -23,7 +23,7 @@ import java.util.List;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CorsFilter extends OncePerRequestFilter {
 
-    @Value("${app.cors.allowed-origins:http://localhost:5173,http://localhost:3000}")
+    @Value("${app.cors.allowed-origins:http://localhost:5173,http://localhost:3000,https://technical-training-2026.vercel.app}")
     private String allowedOriginsRaw;
 
     @Override
@@ -33,10 +33,12 @@ public class CorsFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String origin = request.getHeader("Origin");
+        boolean isOptions = "OPTIONS".equalsIgnoreCase(request.getMethod());
 
         if (origin != null) {
             List<String> allowed = Arrays.stream(allowedOriginsRaw.split(","))
                     .map(String::trim)
+                    .filter(s -> !s.isEmpty())
                     .toList();
 
             if (allowed.contains(origin)) {
@@ -45,13 +47,23 @@ public class CorsFilter extends OncePerRequestFilter {
                 response.setHeader("Access-Control-Allow-Methods",
                         "GET, POST, PUT, PATCH, DELETE, OPTIONS");
                 response.setHeader("Access-Control-Allow-Headers",
-                        "Authorization, Content-Type, X-Requested-With, Accept, Origin");
+                        "Authorization, Content-Type, X-Requested-With, Accept, Origin, " +
+                        "Access-Control-Request-Method, Access-Control-Request-Headers");
                 response.setHeader("Access-Control-Max-Age", "3600");
-            }
-        }
 
-        // Short-circuit preflight requests — no need to pass to Spring Security
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+                // Short-circuit preflight for allowed origins
+                if (isOptions) {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    return;
+                }
+            } else if (isOptions) {
+                // Preflight from unknown origin — reject cleanly without CORS headers
+                // so the browser can report a proper CORS block (not a network error)
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                return;
+            }
+        } else if (isOptions) {
+            // OPTIONS with no Origin header (e.g. curl) — just OK
             response.setStatus(HttpServletResponse.SC_OK);
             return;
         }
