@@ -132,4 +132,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-> Built with ❤️ for Anurag University
+> Built with ❤️ for University Event Management System

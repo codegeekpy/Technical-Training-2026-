@@ -46,7 +46,7 @@ public class EmailService {
         String html = String.format("""
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 8px;">
               <div style="background: #003366; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
-                <h2 style="margin:0;">Anurag University Event Management</h2>
+                <h2 style="margin:0;">University Event Management System</h2>
               </div>
               <div style="padding: 24px;">
                 <p>Dear <strong>%s</strong>,</p>
@@ -55,7 +55,7 @@ public class EmailService {
                 <div style="background: #FFF8F0; border-left: 4px solid #FF6B2B; padding: 12px; margin: 16px 0;">
                   <p style="margin:0;">Track your proposal status in the <a href="%s/my-proposals" style="color:#003366;">Event Management Portal</a></p>
                 </div>
-                <p>Regards,<br>Anurag University Events Team</p>
+                <p>Regards,<br>University Event Management System Team</p>
               </div>
             </div>
             """, organizerName, eventTitle, proposalId, frontendUrl);
@@ -67,7 +67,7 @@ public class EmailService {
         String html = String.format("""
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 8px;">
               <div style="background: #003366; color: white; padding: 20px; border-radius: 8px 8px 0 0;">
-                <h2 style="margin:0;">Anurag University Event Management</h2>
+                <h2 style="margin:0;">University Event Management System</h2>
               </div>
               <div style="padding: 24px;">
                 <p>Dear <strong>%s</strong>,</p>
@@ -80,7 +80,7 @@ public class EmailService {
                 <div style="background: #FFF8F0; border-left: 4px solid #FF6B2B; padding: 12px; margin: 16px 0;">
                   <a href="%s/coordinator/proposals/%d" style="background:#003366; color:white; padding: 10px 20px; text-decoration:none; border-radius:4px; display:inline-block;">Review Proposal</a>
                 </div>
-                <p>Regards,<br>Anurag University Events Team</p>
+                <p>Regards,<br>University Event Management System Team</p>
               </div>
             </div>
             """, coordinatorName, eventTitle, organizerName, proposalId, frontendUrl, proposalId);
@@ -103,7 +103,7 @@ public class EmailService {
                 <p>Great news! Your event proposal <strong>"%s"</strong> (ID: #%d) has been <strong>approved</strong>.</p>
                 %s
                 <p>The venue has been booked and confirmed for your event. Please ensure all preparations are in order.</p>
-                <p>Regards,<br>Anurag University Events Team</p>
+                <p>Regards,<br>University Event Management System Team</p>
               </div>
             </div>
             """, organizerName, eventTitle, proposalId, remarkHtml);
@@ -126,7 +126,7 @@ public class EmailService {
                 <p>Your event proposal <strong>"%s"</strong> (ID: #%d) could not be approved at this time.</p>
                 %s
                 <p>You may submit a revised proposal addressing the feedback.</p>
-                <p>Regards,<br>Anurag University Events Team</p>
+                <p>Regards,<br>University Event Management System Team</p>
               </div>
             </div>
             """, organizerName, eventTitle, proposalId, remarkHtml);
